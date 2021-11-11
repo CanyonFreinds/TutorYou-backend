@@ -54,7 +54,7 @@ public class AuthController {
 		if (userService.isDuplicateEmail(signUpRequest.getEmail())) {
 			throw new EmailDuplicateException();
 		}
-		User user = userService.signUp(signUpRequest);
+		User user = userService.signup(signUpRequest);
 
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentContextPath().path("/users/")
