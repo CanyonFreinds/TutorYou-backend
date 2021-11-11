@@ -1,5 +1,9 @@
 package com.example.wncserver.user.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -7,7 +11,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.example.wncserver.career.domain.Career;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +52,9 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role")
 	private Role role;
+
+	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+	private List<Career> careers = new ArrayList<>();
 
 	public static User createUser(String email, String password, String name, Role authority){
 		User user = new User();
