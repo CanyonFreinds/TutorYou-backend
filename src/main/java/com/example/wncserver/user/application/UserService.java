@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.wncserver.career.domain.Career;
 import com.example.wncserver.career.domain.CareerRepository;
@@ -12,6 +13,7 @@ import com.example.wncserver.career.domain.CareerType;
 import com.example.wncserver.career.presentation.dto.CareerRequest;
 import com.example.wncserver.exception.custom.InvalidPasswordException;
 import com.example.wncserver.exception.custom.UserNotFoundException;
+import com.example.wncserver.support.util.S3UploadUtil;
 import com.example.wncserver.user.domain.Role;
 import com.example.wncserver.user.domain.User;
 import com.example.wncserver.user.presentation.dto.SignupRequest;
@@ -28,6 +30,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final CareerRepository careerRepository;
 	private final PasswordEncoder encoder;
+	private final S3UploadUtil s3UploadUtil;
 
 	@Transactional
 	public User signup(final SignupRequest request) {
@@ -36,7 +39,7 @@ public class UserService {
 		final String name = request.getName();
 		final String role = request.getRole();
 		final User user = User.createUser(email, password, name, Role.valueOf(role));
-		if(Role.valueOf(role).equals(Role.ROLE_TEACHER)) {
+		if (Role.valueOf(role).equals(Role.ROLE_TEACHER)) {
 			createCareerInSignup(request.getCareers(), user);
 		}
 		return userRepository.save(user);
@@ -77,6 +80,14 @@ public class UserService {
 		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 		user.setName(updateRequest.getName());
 		return true;
+	}
+
+	@Transactional
+	public String changeUserImageUrl(final MultipartFile file, final Long userId) {
+		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		String imageUrl = s3UploadUtil.uploadProfileImage(file, userId);
+		user.setImageUrl(imageUrl);
+		return imageUrl;
 	}
 
 	@Transactional
