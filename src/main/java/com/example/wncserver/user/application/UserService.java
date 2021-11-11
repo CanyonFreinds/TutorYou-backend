@@ -1,9 +1,15 @@
 package com.example.wncserver.user.application;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.wncserver.career.domain.Career;
+import com.example.wncserver.career.domain.CareerRepository;
+import com.example.wncserver.career.domain.CareerType;
+import com.example.wncserver.career.presentation.dto.CareerRequest;
 import com.example.wncserver.exception.custom.InvalidPasswordException;
 import com.example.wncserver.exception.custom.UserNotFoundException;
 import com.example.wncserver.user.domain.Role;
@@ -20,16 +26,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserRepository userRepository;
+	private final CareerRepository careerRepository;
 	private final PasswordEncoder encoder;
 
 	@Transactional
-	public User signUp(final SignupRequest request) {
+	public User signup(final SignupRequest request) {
 		final String email = request.getEmail();
 		final String password = encoder.encode(request.getPassword());
 		final String name = request.getName();
-		final String authority = request.getRole();
-		final User user = User.createUser(email, password, name, Role.valueOf(authority));
+		final String role = request.getRole();
+		final User user = User.createUser(email, password, name, Role.valueOf(role));
+		if(Role.valueOf(role).equals(Role.ROLE_TEACHER)) {
+			createCareerInSignup(request.getCareers(), user);
+		}
 		return userRepository.save(user);
+	}
+
+	private void createCareerInSignup(final List<CareerRequest> requests, final User user) {
+		for (CareerRequest createRequest : requests) {
+			final String content = createRequest.getContent();
+			final CareerType careerType = CareerType.valueOf(createRequest.getCareerType());
+			Career career = Career.createCareer(user, content, careerType);
+			careerRepository.save(career);
+		}
 	}
 
 	@Transactional(readOnly = true)
