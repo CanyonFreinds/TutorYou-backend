@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.example.wncserver.career.domain.Career;
+import com.example.wncserver.post.domain.Post;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,6 +47,9 @@ public class User {
 	@Column(name = "point")
 	private double point;
 
+	@Column(name = "voter_count")
+	private int voterCount;
+
 	@Column(name = "ban_count")
 	private int banCount;
 
@@ -56,6 +60,9 @@ public class User {
 	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
 	private List<Career> careers = new ArrayList<>();
 
+	@OneToMany(mappedBy = "author",cascade = CascadeType.ALL)
+	private List<Post> posts = new ArrayList<>();
+
 	public static User createUser(String email, String password, String name, Role authority){
 		User user = new User();
 		user.setEmail(email);
@@ -64,6 +71,7 @@ public class User {
 		user.setRole(authority);
 		user.setBanCount(0);
 		user.setPoint(0.0);
+		user.setVoterCount(0);
 		user.setImageUrl("");
 		return user;
 	}
