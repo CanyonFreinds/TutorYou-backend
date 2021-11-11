@@ -1,12 +1,12 @@
-package com.example.wncserver.post.application;
+package com.example.wncserver.category.application;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.wncserver.post.domain.Category;
-import com.example.wncserver.post.domain.CategoryRepository;
+import com.example.wncserver.category.domain.Category;
+import com.example.wncserver.category.domain.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
 
