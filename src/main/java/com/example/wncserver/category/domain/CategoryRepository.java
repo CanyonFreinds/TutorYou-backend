@@ -1,4 +1,4 @@
-package com.example.wncserver.post.domain;
+package com.example.wncserver.category.domain;
 
 import java.util.Optional;
 
