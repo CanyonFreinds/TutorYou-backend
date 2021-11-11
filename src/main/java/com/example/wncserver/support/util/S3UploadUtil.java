@@ -1,6 +1,7 @@
 package com.example.wncserver.support.util;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,7 +53,20 @@ public class S3UploadUtil {
 
 	public String uploadProfileImage(final MultipartFile file, final Long userId) {
 		String fileExtension = getExtension(file.getOriginalFilename()).orElseThrow(ImageUploadFailureException::new);
-		String fileName = String.format("%s/profile.%s", UUID.nameUUIDFromBytes(userId.toString().getBytes()),
+		String fileName = String.format("%s/profile.%s", UUID.fromString(userId.toString()),
+			fileExtension);
+		try {
+			requestToUpload(file, fileName);
+		} catch (IOException e) {
+			throw new ImageUploadFailureException();
+		}
+		return s3Client.getUrl(bucket, fileName).toString();
+	}
+
+	public String uploadPostImage(MultipartFile file, Long userId) {
+		String fileExtension = getExtension(file.getOriginalFilename()).orElseThrow(ImageUploadFailureException::new);
+		String fileName = String.format("%s/%s.%s", UUID.fromString(userId.toString()),
+			UUID.nameUUIDFromBytes((LocalDateTime.now() + file.getOriginalFilename()).getBytes()),
 			fileExtension);
 		try {
 			requestToUpload(file, fileName);
