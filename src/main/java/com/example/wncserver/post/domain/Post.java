@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.example.wncserver.category.domain.Category;
 import com.example.wncserver.post.presentation.dto.PostRequest;
 import com.example.wncserver.user.domain.User;
 

@@ -1,6 +1,5 @@
-package com.example.wncserver.post.presentation;
+package com.example.wncserver.category.presentation;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.wncserver.post.application.CategoryService;
-import com.example.wncserver.post.domain.Category;
+import com.example.wncserver.category.application.CategoryService;
+import com.example.wncserver.category.domain.Category;
 
 import lombok.RequiredArgsConstructor;
 
