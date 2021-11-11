@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.wncserver.exception.custom.AccessTokenException;
+import com.example.wncserver.exception.custom.CareerNotFoundException;
 import com.example.wncserver.exception.custom.EmailDuplicateException;
 import com.example.wncserver.exception.custom.InvalidPasswordException;
 import com.example.wncserver.exception.custom.RefreshTokenException;
@@ -18,7 +19,7 @@ import com.example.wncserver.exception.custom.UserNotFoundException;
 
 @RestControllerAdvice
 public class ExceptionAdvice {
-	@ExceptionHandler({UserNotFoundException.class})
+	@ExceptionHandler({UserNotFoundException.class, CareerNotFoundException.class})
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	private ResponseEntity<ErrorMsg> notFoundErrorHandler(HttpServletRequest request,
 		final RuntimeException e) {
