@@ -1,6 +1,5 @@
 package com.example.wncserver.user.presentation;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,25 +31,11 @@ public class UserController {
 		if (userService.isDuplicateEmail(email)) {
 			throw new EmailDuplicateException();
 		}
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 
-	@PutMapping("/users/{user_id}/password")
-	public ResponseEntity<Boolean> changeUserPassword(@PathVariable(value = "user_id") final Long userId,
-		@RequestBody final UserPasswordUpdateRequest updateRequest) {
-		final boolean result = userService.changeUserPassword(updateRequest, userId);
-		return ResponseEntity.ok(result);
-	}
-
-	@PutMapping("/users/{user_id}/name")
-	public ResponseEntity<Boolean> changeUserName(@PathVariable(value = "user_id") final Long userId,
-		@RequestBody final UserNameUpdateRequest updateRequest) {
-		final boolean result = userService.changeUserName(updateRequest, userId);
-		return ResponseEntity.ok(result);
-	}
-
-	@DeleteMapping("/users/{user_id}")
-	public ResponseEntity<Void> leaveMembership(@PathVariable(value = "user_id") final Long userId) {
+	@DeleteMapping("/users/{userId}")
+	public ResponseEntity<Void> leaveMembership(@PathVariable final Long userId) {
 		userService.deleteUser(userId);
 		return ResponseEntity.noContent().build();
 	}
@@ -59,5 +44,19 @@ public class UserController {
 	public ResponseEntity<UserResponse> getSelfInformation(@AuthenticationPrincipal final UserPrincipal userPrincipal) {
 		final UserResponse response = userService.getUserInformation(userPrincipal.getId());
 		return ResponseEntity.ok(response);
+	}
+
+	@PutMapping("/users/{userId}/password")
+	public ResponseEntity<Boolean> changeUserPassword(@PathVariable final Long userId,
+		@RequestBody final UserPasswordUpdateRequest updateRequest) {
+		final boolean result = userService.changeUserPassword(updateRequest, userId);
+		return ResponseEntity.ok(result);
+	}
+
+	@PutMapping("/users/{userId}/name")
+	public ResponseEntity<Boolean> changeUserName(@PathVariable final Long userId,
+		@RequestBody final UserNameUpdateRequest updateRequest) {
+		final boolean result = userService.changeUserName(updateRequest, userId);
+		return ResponseEntity.ok(result);
 	}
 }
