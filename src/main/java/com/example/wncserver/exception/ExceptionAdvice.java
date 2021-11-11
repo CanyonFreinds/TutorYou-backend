@@ -12,6 +12,7 @@ import com.example.wncserver.exception.custom.AccessTokenException;
 import com.example.wncserver.exception.custom.CareerNotFoundException;
 import com.example.wncserver.exception.custom.CategoryNotFoundException;
 import com.example.wncserver.exception.custom.EmailDuplicateException;
+import com.example.wncserver.exception.custom.ImageUploadFailureException;
 import com.example.wncserver.exception.custom.InvalidPasswordException;
 import com.example.wncserver.exception.custom.PostNotFoundException;
 import com.example.wncserver.exception.custom.RefreshTokenException;
@@ -48,7 +49,7 @@ public class ExceptionAdvice {
 		return new ResponseEntity<>(errorInfo, HttpStatus.CONFLICT);
 	}
 
-	@ExceptionHandler({InvalidPasswordException.class})
+	@ExceptionHandler({InvalidPasswordException.class, ImageUploadFailureException.class})
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	private ResponseEntity<ErrorMsg> badRequestErrorHandler(HttpServletRequest request,
 		final RuntimeException e) {
