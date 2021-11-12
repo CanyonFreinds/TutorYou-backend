@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.example.wncserver.category.domain.Category;
+import com.example.wncserver.group.domain.Group;
 import com.example.wncserver.post.presentation.dto.PostRequest;
 import com.example.wncserver.user.domain.User;
 
@@ -66,14 +67,24 @@ public class Post extends Auditor {
 	@Column(name = "applicant_count")
 	private int applicantCount;
 
+	@OneToOne
+	@JoinColumn(name = "group_id")
+	private Group group;
+
 	public void setAuthor(User author) {
 		this.author = author;
 		author.getPosts().add(this);
 	}
 
-	public static Post createPost(User author, Category category, PostRequest request) {
+	public void setGroup(Group group) {
+		this.group = group;
+		group.setPost(this);
+	}
+
+	public static Post createPost(User author, Group group, Category category, PostRequest request) {
 		Post post = new Post();
 		post.setAuthor(author);
+		post.setGroup(group);
 		post.setCategory(category);
 		post.setTitle(request.getTitle());
 		post.setContent(request.getContent());
