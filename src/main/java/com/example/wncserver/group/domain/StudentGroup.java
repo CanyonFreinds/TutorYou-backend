@@ -35,6 +35,12 @@ public class StudentGroup {
 	@JoinColumn(name = "user_id")
 	private User student;
 
+	@Column(name = "is_evaluate")
+	private boolean isEvaluate;
+
+	@Column(name = "is_report")
+	private boolean isReport;
+
 	public void setStudent(User student) {
 		this.student = student;
 		student.getStudentGroups().add(this);
@@ -49,6 +55,8 @@ public class StudentGroup {
 		StudentGroup studentGroup = new StudentGroup();
 		studentGroup.setStudent(student);
 		studentGroup.setGroup(group);
+		studentGroup.setEvaluate(false);
+		studentGroup.setReport(false);
 		return studentGroup;
 	}
 }
