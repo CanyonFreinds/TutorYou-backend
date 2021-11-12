@@ -20,6 +20,8 @@ import com.example.wncserver.user.domain.UserPrincipal;
 import com.example.wncserver.user.presentation.dto.UserNameUpdateRequest;
 import com.example.wncserver.user.presentation.dto.UserPasswordUpdateRequest;
 import com.example.wncserver.user.presentation.dto.UserResponse;
+import com.example.wncserver.user.presentation.dto.teacher.TeacherPointUpdateRequest;
+import com.example.wncserver.user.presentation.dto.teacher.TeacherReportRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -67,5 +69,19 @@ public class UserController {
 	public ResponseEntity<String> changeUserProfileImage(@PathVariable final Long userId,
 		@RequestPart("image") final MultipartFile multipartFile) {
 		return ResponseEntity.ok(userService.changeUserImageUrl(multipartFile, userId));
+	}
+
+	@PutMapping("/users/{userId}/point")
+	public ResponseEntity<Boolean> changeTeacherPoint(@PathVariable final Long userId,
+		@RequestBody final TeacherPointUpdateRequest updateRequest) {
+		final boolean result = userService.changeTeacherPoint(updateRequest, userId);
+		return ResponseEntity.ok(result);
+	}
+
+	@PutMapping("/users/{userId}/report")
+	public ResponseEntity<Boolean> reportTeacherPoint(@PathVariable final Long userId,
+		@RequestBody final TeacherReportRequest request) {
+		final boolean result = userService.reportTeacher(request, userId);
+		return ResponseEntity.ok(result);
 	}
 }
