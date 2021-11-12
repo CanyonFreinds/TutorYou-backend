@@ -16,6 +16,7 @@ import com.example.wncserver.group.domain.StudentGroup;
 import com.example.wncserver.group.domain.StudentGroupRepository;
 import com.example.wncserver.group.presentation.dto.GroupResponse;
 import com.example.wncserver.group.presentation.dto.StudentGroupResponse;
+import com.example.wncserver.post.domain.Post;
 import com.example.wncserver.user.domain.Role;
 import com.example.wncserver.user.domain.User;
 import com.example.wncserver.user.domain.UserRepository;
@@ -35,7 +36,20 @@ public class GroupService {
 		final Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
 		final StudentGroup studentGroup = StudentGroup.createStudentGroup(student, group);
 		studentGroupRepository.save(studentGroup);
+		addApplicantCountAndAlarm(group.getPost());
 		return StudentGroupResponse.from(studentGroup);
+	}
+
+	private void addApplicantCountAndAlarm(final Post post) {
+		final int nowApplicantCount = post.getApplicantCount();
+		final int limit = post.getTotalStudentCount();
+		if (nowApplicantCount < limit) {
+			final int addCount = nowApplicantCount + 1;
+			post.setApplicantCount(addCount);
+			// TODO
+			if (addCount == limit) {
+			}
+		}
 	}
 
 	@Transactional
