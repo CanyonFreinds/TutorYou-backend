@@ -9,6 +9,7 @@ import lombok.Getter;
 @Builder
 public class PostResponse {
 	private final Long postId;
+	private final Long groupId;
 	private final String title;
 	private final String content;
 	private final String userName;
@@ -24,13 +25,14 @@ public class PostResponse {
 	public static PostResponse from(Post post) {
 		return PostResponse.builder()
 			.postId(post.getId())
+			.groupId(post.getGroup().getId())
 			.title(post.getTitle())
 			.content(post.getContent())
 			.userName(post.getAuthor().getName())
 			.postType(post.getPostType().toString())
 			.categoryName(post.getCategory().getName())
 			.totalStudentCount(post.getTotalStudentCount())
-			.applicantCount(post.getApplicantCount())
+			.applicantCount(post.getGroup().getStudents().size())
 			.createdAt(post.getCreatedAt().toString())
 			.updatedAt(post.getUpdatedAt().toString())
 			.startDate(post.getStartDate().toString())
