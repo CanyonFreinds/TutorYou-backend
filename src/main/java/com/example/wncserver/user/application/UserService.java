@@ -11,8 +11,13 @@ import com.example.wncserver.career.domain.Career;
 import com.example.wncserver.career.domain.CareerRepository;
 import com.example.wncserver.career.domain.CareerType;
 import com.example.wncserver.career.presentation.dto.CareerRequest;
+import com.example.wncserver.exception.custom.EvaluationBadRequestException;
 import com.example.wncserver.exception.custom.InvalidPasswordException;
+import com.example.wncserver.exception.custom.ReportBadRequestException;
+import com.example.wncserver.exception.custom.StudentGroupNotFoundException;
 import com.example.wncserver.exception.custom.UserNotFoundException;
+import com.example.wncserver.group.domain.StudentGroup;
+import com.example.wncserver.group.domain.StudentGroupRepository;
 import com.example.wncserver.support.util.S3UploadUtil;
 import com.example.wncserver.user.domain.Role;
 import com.example.wncserver.user.domain.User;
@@ -21,16 +26,20 @@ import com.example.wncserver.user.domain.UserRepository;
 import com.example.wncserver.user.presentation.dto.UserNameUpdateRequest;
 import com.example.wncserver.user.presentation.dto.UserPasswordUpdateRequest;
 import com.example.wncserver.user.presentation.dto.UserResponse;
+import com.example.wncserver.user.presentation.dto.teacher.TeacherPointUpdateRequest;
+import com.example.wncserver.user.presentation.dto.teacher.TeacherReportRequest;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+	private static final int BAN_LIMIT = 20;
 	private final UserRepository userRepository;
 	private final CareerRepository careerRepository;
 	private final PasswordEncoder encoder;
 	private final S3UploadUtil s3UploadUtil;
+	private final StudentGroupRepository studentGroupRepository;
 
 	@Transactional
 	public User signup(final SignupRequest request) {
@@ -94,5 +103,42 @@ public class UserService {
 	public void deleteUser(final Long userId) {
 		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 		userRepository.delete(user);
+	}
+
+	@Transactional
+	public boolean changeTeacherPoint(final TeacherPointUpdateRequest updateRequest, final Long userId) {
+		final Long studentId = updateRequest.getStudentId();
+		final Long groupId = updateRequest.getGroupId();
+		final StudentGroup studentGroup = studentGroupRepository.findByGroup_IdAndStudent_Id(groupId, studentId)
+			.orElseThrow(StudentGroupNotFoundException::new);
+		if (studentGroup.isEvaluate()) {
+			throw new EvaluationBadRequestException();
+		}
+		User teacher = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		final double point = teacher.getPoint();
+		final int voterCount = teacher.getVoterCount();
+		teacher.setPoint(point + updateRequest.getPoint());
+		teacher.setVoterCount(voterCount + 1);
+		studentGroup.setEvaluate(true);
+		return true;
+	}
+
+	@Transactional
+	public boolean reportTeacher(final TeacherReportRequest request, final Long userId) {
+		final Long studentId = request.getStudentId();
+		final Long groupId = request.getGroupId();
+		final StudentGroup studentGroup = studentGroupRepository.findByGroup_IdAndStudent_Id(groupId, studentId)
+			.orElseThrow(StudentGroupNotFoundException::new);
+		if (studentGroup.isReport()) {
+			throw new ReportBadRequestException();
+		}
+		User teacher = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		final int banCount = teacher.getBanCount();
+		teacher.setBanCount(banCount + 1);
+		studentGroup.setReport(true);
+		if (!teacher.isBaned() && banCount + 1 >= BAN_LIMIT) {
+			teacher.setBaned(true);
+		}
+		return true;
 	}
 }
