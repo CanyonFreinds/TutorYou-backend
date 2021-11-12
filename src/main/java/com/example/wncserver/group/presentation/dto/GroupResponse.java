@@ -12,12 +12,14 @@ import lombok.Getter;
 public class GroupResponse {
 	private final Long groupId;
 	private final String teacherName;
+	private final Long teacherId;
 	private final List<String> studentNames;
 
 	public static GroupResponse from(Group group, List<String> studentNames) {
 		return GroupResponse.builder()
 			.groupId(group.getId())
 			.teacherName(group.getTeacher().getName())
+			.teacherId(group.getTeacher().getId())
 			.studentNames(studentNames)
 			.build();
 	}
