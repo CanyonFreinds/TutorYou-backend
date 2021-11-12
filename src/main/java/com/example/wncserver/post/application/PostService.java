@@ -13,6 +13,8 @@ import com.example.wncserver.exception.custom.PostNotFoundException;
 import com.example.wncserver.exception.custom.UserNotFoundException;
 import com.example.wncserver.category.domain.Category;
 import com.example.wncserver.category.domain.CategoryRepository;
+import com.example.wncserver.group.domain.Group;
+import com.example.wncserver.group.domain.GroupRepository;
 import com.example.wncserver.post.domain.Post;
 import com.example.wncserver.post.domain.PostQueryRepository;
 import com.example.wncserver.post.domain.PostRepository;
@@ -31,13 +33,16 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final PostQueryRepository postQueryRepository;
 	private final CategoryRepository categoryRepository;
+	private final GroupRepository groupRepository;
 
 	@Transactional
 	public PostResponse savePost(final PostRequest createRequest) {
 		final User author = userRepository.findById(createRequest.getUserId()).orElseThrow(UserNotFoundException::new);
 		final Category category = categoryRepository.findByName(createRequest.getCategoryName()).orElseThrow(
 			CategoryNotFoundException::new);
-		Post post = Post.createPost(author, category, createRequest);
+		final Group group = Group.createGroup(author);
+		groupRepository.save(group);
+		Post post = Post.createPost(author, group, category, createRequest);
 		return PostResponse.from(postRepository.save(post));
 	}
 
