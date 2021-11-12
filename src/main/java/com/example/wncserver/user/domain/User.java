@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.example.wncserver.career.domain.Career;
+import com.example.wncserver.group.domain.Group;
+import com.example.wncserver.group.domain.StudentGroup;
 import com.example.wncserver.post.domain.Post;
 
 import lombok.Getter;
@@ -50,6 +52,9 @@ public class User {
 	@Column(name = "voter_count")
 	private int voterCount;
 
+	@Column(name = "student_count")
+	private int studentCount;
+
 	@Column(name = "ban_count")
 	private int banCount;
 
@@ -57,21 +62,32 @@ public class User {
 	@Column(name = "role")
 	private Role role;
 
+	@Column(name = "is_baned")
+	private boolean isBaned;
+
 	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
 	private List<Career> careers = new ArrayList<>();
 
-	@OneToMany(mappedBy = "author",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
 	private List<Post> posts = new ArrayList<>();
 
-	public static User createUser(String email, String password, String name, Role authority){
+	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+	private List<Group> groups = new ArrayList<>();
+
+	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+	private List<StudentGroup> studentGroups = new ArrayList<>();
+
+	public static User createUser(String email, String password, String name, Role role) {
 		User user = new User();
 		user.setEmail(email);
 		user.setPassword(password);
 		user.setName(name);
-		user.setRole(authority);
+		user.setRole(role);
 		user.setBanCount(0);
 		user.setPoint(0.0);
 		user.setVoterCount(0);
+		user.setStudentCount(0);
+		user.setBaned(false);
 		user.setImageUrl("");
 		return user;
 	}
