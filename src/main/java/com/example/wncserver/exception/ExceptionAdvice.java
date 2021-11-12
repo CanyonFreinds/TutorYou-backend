@@ -12,10 +12,12 @@ import com.example.wncserver.exception.custom.AccessTokenException;
 import com.example.wncserver.exception.custom.CareerNotFoundException;
 import com.example.wncserver.exception.custom.CategoryNotFoundException;
 import com.example.wncserver.exception.custom.EmailDuplicateException;
+import com.example.wncserver.exception.custom.GroupNotFoundException;
 import com.example.wncserver.exception.custom.ImageUploadFailureException;
 import com.example.wncserver.exception.custom.InvalidPasswordException;
 import com.example.wncserver.exception.custom.PostNotFoundException;
 import com.example.wncserver.exception.custom.RefreshTokenException;
+import com.example.wncserver.exception.custom.StudentGroupNotFoundException;
 import com.example.wncserver.exception.custom.TokenExpiredException;
 import com.example.wncserver.exception.custom.TokenInvalidException;
 import com.example.wncserver.exception.custom.UserNotFoundException;
@@ -23,7 +25,7 @@ import com.example.wncserver.exception.custom.UserNotFoundException;
 @RestControllerAdvice
 public class ExceptionAdvice {
 	@ExceptionHandler({UserNotFoundException.class, CareerNotFoundException.class, CategoryNotFoundException.class
-		, PostNotFoundException.class})
+		, PostNotFoundException.class, GroupNotFoundException.class, StudentGroupNotFoundException.class})
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	private ResponseEntity<ErrorMsg> notFoundErrorHandler(HttpServletRequest request,
 		final RuntimeException e) {
