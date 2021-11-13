@@ -94,6 +94,9 @@ public class Post extends Auditor {
 		if (PostType.valueOf(request.getPostType()).equals(PostType.ONE_TO_MANY)) {
 			post.setStartDate(LocalDate.parse(request.getStartDate()));
 			post.setEndDate(LocalDate.parse(request.getEndDate()));
+		} else {
+			post.setStartDate(LocalDate.EPOCH);
+			post.setEndDate(LocalDate.EPOCH);
 		}
 		return post;
 	}
