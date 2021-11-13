@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class AdminTeacherResponse {
+	private final Long teacherId;
 	private final String teacherName;
 	private final double point;
 	private final int banCount;
@@ -15,6 +16,7 @@ public class AdminTeacherResponse {
 
 	public static AdminTeacherResponse from(User teacher) {
 		return AdminTeacherResponse.builder()
+			.teacherId(teacher.getId())
 			.teacherName(teacher.getName())
 			.point(teacher.getPoint())
 			.banCount(teacher.getBanCount())
