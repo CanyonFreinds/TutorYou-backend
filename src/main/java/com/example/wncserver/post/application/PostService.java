@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.wncserver.exception.custom.CategoryNotFoundException;
+import com.example.wncserver.exception.custom.ForbidToUserWritePost;
 import com.example.wncserver.exception.custom.PostNotFoundException;
 import com.example.wncserver.exception.custom.UserNotFoundException;
 import com.example.wncserver.category.domain.Category;
@@ -38,6 +39,9 @@ public class PostService {
 	@Transactional
 	public PostResponse savePost(final PostRequest createRequest) {
 		final User author = userRepository.findById(createRequest.getUserId()).orElseThrow(UserNotFoundException::new);
+		if (author.isBaned()) {
+			throw new ForbidToUserWritePost();
+		}
 		final Category category = categoryRepository.findByName(createRequest.getCategoryName()).orElseThrow(
 			CategoryNotFoundException::new);
 		final Group group = Group.createGroup(author);
