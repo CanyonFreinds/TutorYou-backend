@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import com.example.wncserver.user.presentation.dto.admin.AdminResponse;
 import com.example.wncserver.user.presentation.dto.teacher.TeacherPageResponse;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
@@ -35,6 +36,22 @@ public class UserQueryRepository {
 		return TeacherPageResponse.from(result);
 	}
 
+	public AdminResponse findAllByIsBaned(boolean isBaned, Pageable pageable) {
+		BooleanBuilder builder = new BooleanBuilder();
+		builder.or(QUser.user.isBaned.eq(isBaned)
+			.and(QUser.user.role.eq(Role.ROLE_TEACHER)));
+
+		QueryResults<User> result = jpaQueryFactory.select(QUser.user)
+			.from(QUser.user)
+			.where(builder)
+			.distinct()
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(QUser.user.banCount.desc())
+			.fetchResults();
+
+		return AdminResponse.from(result);
+	}
 	private OrderSpecifier<?> getOrderSpecifier(final String sort, final String order) {
 		if (sort.equals("") && order.equals("desc")) {
 			return QUser.user.name.desc();
