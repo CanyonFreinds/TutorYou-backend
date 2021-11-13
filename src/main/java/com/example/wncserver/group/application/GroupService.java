@@ -16,7 +16,10 @@ import com.example.wncserver.group.domain.StudentGroup;
 import com.example.wncserver.group.domain.StudentGroupRepository;
 import com.example.wncserver.group.presentation.dto.GroupResponse;
 import com.example.wncserver.group.presentation.dto.StudentGroupResponse;
+import com.example.wncserver.notification.domain.Notification;
+import com.example.wncserver.notification.domain.NotificationRepository;
 import com.example.wncserver.post.domain.Post;
+import com.example.wncserver.support.handler.NotificationHandler;
 import com.example.wncserver.user.domain.Role;
 import com.example.wncserver.user.domain.User;
 import com.example.wncserver.user.domain.UserRepository;
@@ -29,6 +32,8 @@ public class GroupService {
 	private final GroupRepository groupRepository;
 	private final UserRepository userRepository;
 	private final StudentGroupRepository studentGroupRepository;
+	private final NotificationRepository notificationRepository;
+	private final NotificationHandler notificationHandler;
 
 	@Transactional
 	public StudentGroupResponse joinGroupForStudent(final Long groupId, final Long userId) {
@@ -36,22 +41,44 @@ public class GroupService {
 		final Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
 		final StudentGroup studentGroup = StudentGroup.createStudentGroup(student, group);
 		studentGroupRepository.save(studentGroup);
-		addApplicantCountAndAlarm(group.getPost());
+		addApplicantCountAndAlarm(group);
 		return StudentGroupResponse.from(studentGroup);
 	}
 
-	private void addApplicantCountAndAlarm(final Post post) {
+	private void addApplicantCountAndAlarm(final Group group) {
+		final Post post = group.getPost();
 		final int nowApplicantCount = post.getApplicantCount();
 		final int limit = post.getTotalStudentCount();
 		if (nowApplicantCount < limit) {
 			final int addCount = nowApplicantCount + 1;
 			post.setApplicantCount(addCount);
-			// TODO
 			if (addCount == limit) {
-				User user = post.getAuthor();
-				user.setStudentCount(addCount);
+				User teacher = post.getAuthor();
+				teacher.setStudentCount(addCount);
+				setNotificationStudent(group);
+				setNotificationTeacher(group);
 			}
 		}
+	}
+
+	private void setNotificationStudent(final Group group) {
+		List<StudentGroup> studentGroups = group.getStudents();
+		for (StudentGroup studentGroup : studentGroups) {
+			Notification notification = Notification.createNotification(studentGroup.getStudent());
+			sendNotificationToClient(studentGroup.getStudent().getId(), notification);
+			notificationRepository.save(notification);
+		}
+	}
+
+	private void setNotificationTeacher(final Group group) {
+		User teacher = group.getTeacher();
+		Notification notification = Notification.createNotification(teacher);
+		sendNotificationToClient(teacher.getId(), notification);
+		notificationRepository.save(notification);
+	}
+
+	private void sendNotificationToClient(Long userId, Notification notification) {
+		notificationHandler.sendNotification(userId, notification);
 	}
 
 	@Transactional
