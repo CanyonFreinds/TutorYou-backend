@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import com.example.wncserver.career.domain.Career;
 import com.example.wncserver.group.domain.Group;
 import com.example.wncserver.group.domain.StudentGroup;
+import com.example.wncserver.notification.domain.Notification;
 import com.example.wncserver.post.domain.Post;
 
 import lombok.Getter;
@@ -76,6 +77,9 @@ public class User {
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
 	private List<StudentGroup> studentGroups = new ArrayList<>();
+
+	@OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+	private List<Notification> notifications = new ArrayList<>();
 
 	public static User createUser(String email, String password, String name, Role role) {
 		User user = new User();
