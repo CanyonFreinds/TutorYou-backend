@@ -16,6 +16,7 @@ public class TeacherResponse {
 	private final String name;
 	private final double point;
 	private final int studentCount;
+	private final String imageSrc;
 	private final List<CareerResponse> careers;
 
 	public static TeacherResponse from(User teacher) {
@@ -24,6 +25,7 @@ public class TeacherResponse {
 			.name(teacher.getName())
 			.point(teacher.getPoint())
 			.studentCount(teacher.getStudentCount())
+			.imageSrc(teacher.getImageUrl())
 			.careers(teacher.getCareers().stream().map(CareerResponse::from).collect(Collectors.toList()))
 			.build();
 	}
