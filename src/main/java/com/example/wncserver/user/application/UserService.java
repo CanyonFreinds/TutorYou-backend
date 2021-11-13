@@ -1,7 +1,6 @@
 package com.example.wncserver.user.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +34,6 @@ import com.example.wncserver.user.presentation.dto.admin.AdminTeacherResponse;
 import com.example.wncserver.user.presentation.dto.teacher.TeacherPageResponse;
 import com.example.wncserver.user.presentation.dto.teacher.TeacherPointUpdateRequest;
 import com.example.wncserver.user.presentation.dto.teacher.TeacherReportRequest;
-import com.example.wncserver.user.presentation.dto.teacher.TeacherResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -157,5 +155,10 @@ public class UserService {
 		User teacher = userRepository.findById(teacherId).orElseThrow(UserNotFoundException::new);
 		teacher.setBaned(!teacher.isBaned());
 		return AdminTeacherResponse.from(teacher);
+	}
+
+	@Transactional(readOnly = true)
+	public AdminResponse getTeacherListByIsBaned(final boolean isBaned, final Pageable pageable) {
+		return userQueryRepository.findAllByIsBaned(isBaned, pageable);
 	}
 }
