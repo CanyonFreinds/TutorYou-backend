@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.authorizeRequests()    // HttpServletRequest 를 사용하는 요청들에 대한 접근제한을 요청한다는 것
-			.antMatchers("/api/**").permitAll() //api 테스트를 위해서 잠시 열어둠
+			.antMatchers("/**").permitAll() //api 테스트를 위해서 잠시 열어둠
 			.anyRequest().authenticated();
 	}
 }
