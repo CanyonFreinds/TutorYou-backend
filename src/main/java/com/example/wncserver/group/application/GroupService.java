@@ -48,6 +48,8 @@ public class GroupService {
 			post.setApplicantCount(addCount);
 			// TODO
 			if (addCount == limit) {
+				User user = post.getAuthor();
+				user.setStudentCount(addCount);
 			}
 		}
 	}
