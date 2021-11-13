@@ -1,11 +1,13 @@
 package com.example.wncserver.user.presentation;
 
+import java.util.Optional;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,7 @@ import com.example.wncserver.user.domain.UserPrincipal;
 import com.example.wncserver.user.presentation.dto.UserNameUpdateRequest;
 import com.example.wncserver.user.presentation.dto.UserPasswordUpdateRequest;
 import com.example.wncserver.user.presentation.dto.UserResponse;
+import com.example.wncserver.user.presentation.dto.teacher.TeacherPageResponse;
 import com.example.wncserver.user.presentation.dto.teacher.TeacherPointUpdateRequest;
 import com.example.wncserver.user.presentation.dto.teacher.TeacherReportRequest;
 
@@ -82,6 +85,18 @@ public class UserController {
 	public ResponseEntity<Boolean> reportTeacherPoint(@PathVariable final Long userId,
 		@RequestBody final TeacherReportRequest request) {
 		final boolean result = userService.reportTeacher(request, userId);
+		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/users/teachers")
+	public ResponseEntity<TeacherPageResponse> getTeachers(
+		@RequestParam(value = "query") final Optional<String> optionalQuery,
+		@RequestParam(value = "sort") final Optional<String> optionalSort,
+		@RequestParam(value = "order") final Optional<String> optionalOrder, final Pageable pageable) {
+		final String query = optionalQuery.orElse("");
+		final String sort = optionalSort.orElse("asc");
+		final String order = optionalOrder.orElse("");
+		TeacherPageResponse result = userService.getTeachers(query, sort, order, pageable);
 		return ResponseEntity.ok(result);
 	}
 }
