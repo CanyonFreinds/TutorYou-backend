@@ -92,7 +92,7 @@ public class User {
 		user.setVoterCount(0);
 		user.setStudentCount(0);
 		user.setBaned(false);
-		user.setImageUrl("");
+		user.setImageUrl("https://user-images.githubusercontent.com/55012742/141612238-4293f504-82fc-4689-8bc4-15bdb6dbe834.png");
 		return user;
 	}
 }
