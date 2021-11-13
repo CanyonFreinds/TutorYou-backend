@@ -22,7 +22,7 @@ public class TeacherPageResponse {
 			.results(result.getResults().stream().map(TeacherResponse::from).collect(Collectors.toList()))
 			.total(result.getTotal())
 			.pageSize((long)Math.ceil(((double)result.getTotal() / result.getLimit())))
-			.pageNumber((result.getOffset() / result.getLimit()) + 1)
+			.pageNumber((result.getOffset() / result.getLimit()))
 			.build();
 	}
 }
