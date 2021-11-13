@@ -16,6 +16,7 @@ public class UserResponse {
 	private final String email;
 	private final String name;
 	private final String role;
+	private final String imageSrc;
 	private final List<CareerResponse> careers;
 
 	public static UserResponse from(final User user) {
@@ -24,6 +25,7 @@ public class UserResponse {
 			.name(user.getName())
 			.email(user.getEmail())
 			.role(user.getRole().toString())
+			.imageSrc(user.getImageUrl())
 			.careers(user.getCareers().stream().map(CareerResponse::from).collect(Collectors.toList()))
 			.build();
 	}

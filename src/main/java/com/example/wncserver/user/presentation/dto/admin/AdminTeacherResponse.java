@@ -12,6 +12,7 @@ public class AdminTeacherResponse {
 	private final String teacherName;
 	private final double point;
 	private final int banCount;
+	private final String imageSrc;
 	private final boolean isBaned;
 
 	public static AdminTeacherResponse from(User teacher) {
@@ -19,6 +20,7 @@ public class AdminTeacherResponse {
 			.teacherId(teacher.getId())
 			.teacherName(teacher.getName())
 			.point(teacher.getPoint())
+			.imageSrc(teacher.getImageUrl())
 			.banCount(teacher.getBanCount())
 			.isBaned(teacher.isBaned())
 			.build();
