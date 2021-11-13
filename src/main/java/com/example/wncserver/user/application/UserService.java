@@ -1,7 +1,10 @@
 package com.example.wncserver.user.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,25 +24,30 @@ import com.example.wncserver.group.domain.StudentGroupRepository;
 import com.example.wncserver.support.util.S3UploadUtil;
 import com.example.wncserver.user.domain.Role;
 import com.example.wncserver.user.domain.User;
+import com.example.wncserver.user.domain.UserQueryRepository;
 import com.example.wncserver.user.presentation.dto.SignupRequest;
 import com.example.wncserver.user.domain.UserRepository;
 import com.example.wncserver.user.presentation.dto.UserNameUpdateRequest;
 import com.example.wncserver.user.presentation.dto.UserPasswordUpdateRequest;
 import com.example.wncserver.user.presentation.dto.UserResponse;
+import com.example.wncserver.user.presentation.dto.admin.AdminResponse;
+import com.example.wncserver.user.presentation.dto.admin.AdminTeacherResponse;
+import com.example.wncserver.user.presentation.dto.teacher.TeacherPageResponse;
 import com.example.wncserver.user.presentation.dto.teacher.TeacherPointUpdateRequest;
 import com.example.wncserver.user.presentation.dto.teacher.TeacherReportRequest;
+import com.example.wncserver.user.presentation.dto.teacher.TeacherResponse;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	private static final int BAN_LIMIT = 20;
 	private final UserRepository userRepository;
 	private final CareerRepository careerRepository;
 	private final PasswordEncoder encoder;
 	private final S3UploadUtil s3UploadUtil;
 	private final StudentGroupRepository studentGroupRepository;
+	private final UserQueryRepository userQueryRepository;
 
 	@Transactional
 	public User signup(final SignupRequest request) {
@@ -117,7 +125,7 @@ public class UserService {
 		User teacher = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 		final double point = teacher.getPoint();
 		final int voterCount = teacher.getVoterCount();
-		teacher.setPoint(point + updateRequest.getPoint());
+		teacher.setPoint(((point * voterCount) + updateRequest.getPoint()) / (voterCount + 1));
 		teacher.setVoterCount(voterCount + 1);
 		studentGroup.setEvaluate(true);
 		return true;
@@ -133,12 +141,21 @@ public class UserService {
 			throw new ReportBadRequestException();
 		}
 		User teacher = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-		final int banCount = teacher.getBanCount();
-		teacher.setBanCount(banCount + 1);
+		teacher.setBanCount(teacher.getBanCount() + 1);
 		studentGroup.setReport(true);
-		if (!teacher.isBaned() && banCount + 1 >= BAN_LIMIT) {
-			teacher.setBaned(true);
-		}
 		return true;
+	}
+
+	@Transactional(readOnly = true)
+	public TeacherPageResponse getTeachers(final String query, final String sort, final String order,
+		final Pageable pageable) {
+		return userQueryRepository.findAllByQuery(query, sort, order, pageable);
+	}
+
+	@Transactional
+	public AdminTeacherResponse manageBanTeacher(final Long teacherId) {
+		User teacher = userRepository.findById(teacherId).orElseThrow(UserNotFoundException::new);
+		teacher.setBaned(!teacher.isBaned());
+		return AdminTeacherResponse.from(teacher);
 	}
 }
