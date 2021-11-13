@@ -37,7 +37,7 @@ public class UserQueryRepository {
 
 	private OrderSpecifier<?> getOrderSpecifier(final String sort, final String order) {
 		if (sort.equals("") && order.equals("desc")) {
-			return QUser.user.id.desc();
+			return QUser.user.name.desc();
 		} else if (sort.equals("studentCount") && order.equals("asc")) {
 			return QUser.user.studentCount.asc();
 		} else if (sort.equals("studentCount") && order.equals("desc")) {
@@ -47,7 +47,7 @@ public class UserQueryRepository {
 		} else if (sort.equals("point") && order.equals("desc")) {
 			return QUser.user.point.desc();
 		} else {
-			return QUser.user.id.asc();
+			return QUser.user.name.asc();
 		}
 	}
 }
