@@ -13,6 +13,7 @@ import com.example.wncserver.exception.custom.CareerNotFoundException;
 import com.example.wncserver.exception.custom.CategoryNotFoundException;
 import com.example.wncserver.exception.custom.EmailDuplicateException;
 import com.example.wncserver.exception.custom.EvaluationBadRequestException;
+import com.example.wncserver.exception.custom.ForbidToUserWritePost;
 import com.example.wncserver.exception.custom.GroupNotFoundException;
 import com.example.wncserver.exception.custom.ImageUploadFailureException;
 import com.example.wncserver.exception.custom.InvalidPasswordException;
@@ -60,5 +61,14 @@ public class ExceptionAdvice {
 		final RuntimeException e) {
 		ErrorMsg errorInfo = new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.toString(), request.getRequestURI());
 		return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler({ForbidToUserWritePost.class})
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	private ResponseEntity<ErrorMsg> forbiddenErrorHandler(HttpServletRequest request,
+		final RuntimeException e) {
+		ErrorMsg errorInfo = new ErrorMsg(e.getMessage(), HttpStatus.FORBIDDEN.toString(),
+			request.getRequestURI());
+		return new ResponseEntity<>(errorInfo, HttpStatus.FORBIDDEN);
 	}
 }
