@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.example.wncserver.exception.custom.AccessTokenException;
 import com.example.wncserver.exception.custom.CareerNotFoundException;
 import com.example.wncserver.exception.custom.CategoryNotFoundException;
+import com.example.wncserver.exception.custom.ChatRoomNotFoundException;
 import com.example.wncserver.exception.custom.EmailDuplicateException;
 import com.example.wncserver.exception.custom.EvaluationBadRequestException;
 import com.example.wncserver.exception.custom.ForbidToUserWritePost;
@@ -30,7 +31,7 @@ import com.example.wncserver.exception.custom.UserNotFoundException;
 public class ExceptionAdvice {
 	@ExceptionHandler({UserNotFoundException.class, CareerNotFoundException.class, CategoryNotFoundException.class
 		, PostNotFoundException.class, GroupNotFoundException.class, StudentGroupNotFoundException.class,
-		NotificationNotFoundException.class})
+		NotificationNotFoundException.class, ChatRoomNotFoundException.class})
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	private ResponseEntity<ErrorMsg> notFoundErrorHandler(HttpServletRequest request,
 		final RuntimeException e) {
