@@ -2,9 +2,6 @@ package com.example.wncserver.support.handler;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -18,7 +15,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.example.wncserver.notification.domain.Notification;
 import com.example.wncserver.notification.domain.NotificationRepository;
 import com.example.wncserver.notification.presentation.dto.NotificationResponse;
-import com.example.wncserver.support.dto.WebSocketMessage;
+import com.example.wncserver.support.dto.NotificationMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -49,13 +46,13 @@ public class NotificationHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(final WebSocketSession session) {
 		log.info("Socket 이 연결되었습니다." + session.getId());
-		sendMessage(session, new WebSocketMessage(TYPE_SEND_USER_ID, null, null));
+		sendMessage(session, new NotificationMessage(TYPE_SEND_USER_ID, null, null));
 	}
 
 	@Override
 	protected void handleTextMessage(final WebSocketSession session, final TextMessage textMessage) {
 		try {
-			WebSocketMessage message = objectMapper.readValue(textMessage.getPayload(), WebSocketMessage.class);
+			NotificationMessage message = objectMapper.readValue(textMessage.getPayload(), NotificationMessage.class);
 			String type = message.getType();
 			Long userId = message.getUserId();
 
@@ -66,7 +63,7 @@ public class NotificationHandler extends TextWebSocketHandler {
 				List<NotificationResponse> responses = notifications.stream()
 					.map(NotificationResponse::from)
 					.collect(Collectors.toList());
-				sendMessage(session, new WebSocketMessage(TYPE_SEND_NOTIFICATION, userId, responses));
+				sendMessage(session, new NotificationMessage(TYPE_SEND_NOTIFICATION, userId, responses));
 			}
 		} catch (IOException e) {
 			log.error(e.getMessage());
@@ -77,11 +74,11 @@ public class NotificationHandler extends TextWebSocketHandler {
 		if (userIdToSession.containsKey(userId)) {
 			WebSocketSession session = userIdToSession.get(userId);
 			List<NotificationResponse> response = List.of(NotificationResponse.from(notification));
-			sendMessage(session, new WebSocketMessage(TYPE_SEND_NOTIFICATION, userId, response));
+			sendMessage(session, new NotificationMessage(TYPE_SEND_NOTIFICATION, userId, response));
 		}
 	}
 
-	private void sendMessage(WebSocketSession session, WebSocketMessage message) {
+	private void sendMessage(WebSocketSession session, NotificationMessage message) {
 		try {
 			String json = objectMapper.writeValueAsString(message);
 			session.sendMessage(new TextMessage(json));
