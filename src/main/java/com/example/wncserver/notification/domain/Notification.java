@@ -38,10 +38,10 @@ public class Notification {
 		receiver.getNotifications().add(this);
 	}
 
-	public static Notification createNotification(User receiver) {
+	public static Notification createNotification(User receiver, String message) {
 		Notification notification = new Notification();
 		notification.setReceiver(receiver);
-		notification.setMessage("과외 모집이 완료되었습니다.");
+		notification.setMessage(message);
 		return notification;
 	}
 }

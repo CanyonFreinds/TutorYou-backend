@@ -28,9 +28,10 @@ public class NotificationService {
 	}
 
 	@Transactional
-	public Long createNotification(final Long userId) {
+	public Long createNotification(final Long userId, final String message) {
 		User receiver = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-		Notification notification = Notification.createNotification(receiver);
+		Notification notification = Notification.createNotification(receiver, message);
+		notificationRepository.save(notification);
 		notificationHandler.sendNotification(receiver.getId(), notification);
 		return notification.getId();
 	}
