@@ -53,7 +53,7 @@ public class S3UploadUtil {
 
 	public String uploadProfileImage(final MultipartFile file, final Long userId) {
 		String fileExtension = getExtension(file.getOriginalFilename()).orElseThrow(ImageUploadFailureException::new);
-		String fileName = String.format("%s/profile.%s", UUID.fromString(userId.toString()),
+		String fileName = String.format("%s/profile.%s", userId.toString(),
 			fileExtension);
 		try {
 			requestToUpload(file, fileName);
