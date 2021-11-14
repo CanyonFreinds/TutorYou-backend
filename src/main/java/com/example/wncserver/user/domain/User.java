@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.example.wncserver.career.domain.Career;
+import com.example.wncserver.chat.domain.ChatRoomUser;
 import com.example.wncserver.group.domain.Group;
 import com.example.wncserver.group.domain.StudentGroup;
 import com.example.wncserver.notification.domain.Notification;
@@ -80,6 +81,9 @@ public class User {
 
 	@OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
 	private List<Notification> notifications = new ArrayList<>();
+
+	@OneToMany(mappedBy = "chatter", cascade = CascadeType.ALL)
+	private List<ChatRoomUser> chatRooms = new ArrayList<>();
 
 	public static User createUser(String email, String password, String name, Role role) {
 		User user = new User();
