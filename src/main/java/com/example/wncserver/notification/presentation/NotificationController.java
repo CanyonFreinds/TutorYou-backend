@@ -26,6 +26,6 @@ public class NotificationController {
 
 	@PostMapping("/notifications/test/{userId}")
 	public ResponseEntity<Long> createNotification(@PathVariable final Long userId) {
-		return ResponseEntity.ok(notificationService.createNotification(userId));
+		return ResponseEntity.ok(notificationService.createNotification(userId, "테스트 알림입니다."));
 	}
 }
