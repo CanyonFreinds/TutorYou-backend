@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class WebSocketMessage {
+public class NotificationMessage {
 	private String type;
 	private Long userId;
 	private List<NotificationResponse> notifications;
 
-	public WebSocketMessage(String type, Long userId, List<NotificationResponse> notifications) {
+	public NotificationMessage(String type, Long userId, List<NotificationResponse> notifications) {
 		this.type = type;
 		this.userId = userId;
 		this.notifications = notifications;
