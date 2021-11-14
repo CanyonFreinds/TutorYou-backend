@@ -42,6 +42,12 @@ public class UserController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@GetMapping("/users/{userId}")
+	public ResponseEntity<UserResponse> getProfile(@PathVariable final Long userId) {
+		final UserResponse response = userService.getUserInformation(userId);
+		return ResponseEntity.ok(response);
+	}
+
 	@DeleteMapping("/users/{userId}")
 	public ResponseEntity<Void> leaveMembership(@PathVariable final Long userId) {
 		userService.deleteUser(userId);
