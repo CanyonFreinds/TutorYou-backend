@@ -7,6 +7,7 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
+import com.example.wncserver.support.handler.ChattingHandler;
 import com.example.wncserver.support.handler.NotificationHandler;
 
 import lombok.RequiredArgsConstructor;
@@ -16,11 +17,13 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 	private final NotificationHandler notificationHandler;
+	private final ChattingHandler chattingHandler;
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		registry.addHandler(notificationHandler, "/notifications")
-			.setAllowedOrigins("*"); // allow all origins
+			.addHandler(chattingHandler, "/chat")
+			.setAllowedOrigins("*");
 	}
 
 	@Bean
