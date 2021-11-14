@@ -64,7 +64,7 @@ public class GroupService {
 	private void setNotificationStudent(final Group group) {
 		List<StudentGroup> studentGroups = group.getStudents();
 		for (StudentGroup studentGroup : studentGroups) {
-			Notification notification = Notification.createNotification(studentGroup.getStudent());
+			Notification notification = Notification.createNotification(studentGroup.getStudent(), "신청한 과외가 모집 완료되었습니다.");
 			sendNotificationToClient(studentGroup.getStudent().getId(), notification);
 			notificationRepository.save(notification);
 		}
@@ -72,7 +72,7 @@ public class GroupService {
 
 	private void setNotificationTeacher(final Group group) {
 		User teacher = group.getTeacher();
-		Notification notification = Notification.createNotification(teacher);
+		Notification notification = Notification.createNotification(teacher, "과외 모집이 완료되었습니다.");
 		sendNotificationToClient(teacher.getId(), notification);
 		notificationRepository.save(notification);
 	}
