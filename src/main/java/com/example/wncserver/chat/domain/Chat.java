@@ -39,14 +39,23 @@ public class Chat {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
+	@Column(name = "sender_id")
+	private Long senderId;
+
+	@Column(name = "receiver_id")
+	private Long receiverId;
+
 	public void setChatRoom(ChatRoom chatRoom) {
 		this.chatRoom = chatRoom;
 		chatRoom.getChats().add(this);
 	}
 
-	public static Chat createChat(ChatRoom chatRoom) {
+	public static Chat createChat(ChatRoom chatRoom, Long senderId, Long receiverId, String message) {
 		Chat chat = new Chat();
 		chat.setChatRoom(chatRoom);
+		chat.setSenderId(senderId);
+		chat.setReceiverId(receiverId);
+		chat.setMessage(message);
 		chat.setCreatedAt(LocalDateTime.now());
 		return chat;
 	}
