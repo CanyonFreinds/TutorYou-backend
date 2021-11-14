@@ -32,7 +32,7 @@ public class PostResponse {
 			.postType(post.getPostType().toString())
 			.categoryName(post.getCategory().getName())
 			.totalStudentCount(post.getTotalStudentCount())
-			.applicantCount(post.getGroup().getStudents().size())
+			.applicantCount(post.getApplicantCount())
 			.createdAt(post.getCreatedAt().toString())
 			.updatedAt(post.getUpdatedAt().toString())
 			.startDate(post.getStartDate().toString())
